@@ -1,36 +1,39 @@
 import React from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
+import { useRouter } from 'expo-router';
 
-// 1. Array of Objects: Configured with your menu items and categories
+// Menu data array with details and prices matching your laboratory guidelines
 const menuItems = [
-  { id: '1', category: 'Hot Drinks', name: 'Americano' },
-  { id: '2', category: 'Hot Drinks', name: 'Latte' },
-  { id: '3', category: 'Desserts', name: 'Cheesecake' },
-  { id: '4', category: 'Desserts', name: 'Brownie' },
-  { id: '5', category: 'Cold Drinks', name: 'Iced Matcha Latte' }, // New Category & Item
-  { id: '6', category: 'Cold Drinks', name: 'Cold Brew' },         // New Item
-  { id: '7', category: 'Desserts', name: 'Chocolate Croissant' },  // New Item
+  { id: '1', category: 'Hot Drinks', name: 'Americano', price: '₱120', description: 'Bold and strong black coffee brewed with espresso shots.' },
+  { id: '2', category: 'Hot Drinks', name: 'Latte', price: '₱160', description: 'Rich espresso balanced with steamed milk and a light layer of foam.' },
+  { id: '3', category: 'Desserts', name: 'Cheesecake', price: '₱180', description: 'Creamy New York style cheesecake with a classic graham cracker crust.' },
+  { id: '4', category: 'Desserts', name: 'Brownie', price: '₱110', description: 'Fudgy and rich chocolate brownie served warm.' },
+  { id: '5', category: 'Cold Drinks', name: 'Iced Matcha Latte', price: '₱170', description: 'Pure Japanese matcha whisked with cold milk over ice.' },
 ];
 
-export default function App() {
-  
-  // Basic interaction function to handle button clicks
-  const handleAddToCart = (itemName: string) => {
-    console.log(`Added to cart: ${itemName}`);
+export default function MenuScreen() {
+  const router = useRouter();
+
+  const handleViewDetails = (item: typeof menuItems[0]) => {
+    // route.params working: passing data dynamically to the detail view
+    router.push({
+      pathname: '/details',
+      params: { name: item.name, price: item.price, category: item.category, description: item.description }
+    });
   };
 
-  // 2. Render Item: Controls the layout for each menu item row
-  const renderItem = ({ item }: { item: { id: string; category: string; name: string } }) => (
+  const renderItem = ({ item }: { item: typeof menuItems[0] }) => (
     <View style={styles.itemContainer}>
       <Text style={styles.categoryText}>{item.category}</Text>
       <Text style={styles.nameText}>{item.name}</Text>
+      <Text style={styles.priceText}>{item.price}</Text>
       
-      {/* Interactive button updated to "Add to Cart" */}
+      {/* navigation.navigate working: Tapping an item routes to details */}
       <TouchableOpacity 
         style={styles.button} 
-        onPress={() => handleAddToCart(item.name)}
+        onPress={() => handleViewDetails(item)}
       >
-        <Text style={styles.buttonText}>Add to Cart</Text>
+        <Text style={styles.buttonText}>View Details</Text>
       </TouchableOpacity>
       <View style={styles.separator} />
     </View>
@@ -38,10 +41,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* 3. Your custom retro app title */}
       <Text style={styles.appTitle}>thisisretro cafe</Text>
-      
-      {/* 4. FlatList Component to render the list efficiently */}
       <FlatList
         data={menuItems}
         keyExtractor={(item) => item.id}
@@ -52,61 +52,15 @@ export default function App() {
   );
 }
 
-// Custom styled theme featuring your requested Olive Green palette
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#3B441F', // Olive Green background color
-    paddingTop: 40,
-  },
-  appTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#F4F1EA', // Cream/Off-white for a beautiful retro contrast
-    paddingHorizontal: 20,
-    marginBottom: 25,
-  },
-  listContainer: {
-    paddingHorizontal: 20,
-  },
-  itemContainer: {
-    marginBottom: 15,
-  },
-  categoryText: {
-    fontSize: 12,
-    color: '#C2C8A4', // Lighter olive-tint for categories
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 3,
-  },
-  nameText: {
-    fontSize: 19,
-    fontWeight: 'bold',
-    color: '#F4F1EA',
-    marginBottom: 8,
-  },
-  button: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#262C14', // Darker olive green for the button depth
-    borderRadius: 4,
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 2,
-  },
-  buttonText: {
-    color: '#F4F1EA',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#4B5529', // Subtle separator lines
-    width: '100%',
-  },
+  container: { flex: 1, backgroundColor: '#3B441F', paddingTop: 20 },
+  appTitle: { fontSize: 32, fontWeight: 'bold', color: '#F4F1EA', paddingHorizontal: 20, marginBottom: 25 },
+  listContainer: { paddingHorizontal: 20 },
+  itemContainer: { marginBottom: 15 },
+  categoryText: { fontSize: 11, color: '#C2C8A4', fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 2 },
+  nameText: { fontSize: 19, fontWeight: 'bold', color: '#F4F1EA' },
+  priceText: { fontSize: 14, color: '#C2C8A4', marginBottom: 8, fontWeight: '500' },
+  button: { alignSelf: 'flex-start', backgroundColor: '#262C14', borderRadius: 4, paddingVertical: 6, paddingHorizontal: 14, marginBottom: 15 },
+  buttonText: { color: '#F4F1EA', fontSize: 13, fontWeight: '600' },
+  separator: { height: 1, backgroundColor: '#4B5529', width: '100%' },
 });
